@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Order;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
@@ -31,7 +31,6 @@ class OrderController extends Controller
         ->get();
         return view("backend.order.create",compact("list"));
     }
-
 
     /**
      * Store a newly created resource in storage.

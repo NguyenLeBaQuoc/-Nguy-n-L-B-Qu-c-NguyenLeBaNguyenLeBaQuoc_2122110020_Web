@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 @section('title','Quản lý sản phẩm')
 @section('contant')
+<form action="{{ route('admin.product.store') }}" method="post" enctype="multipart/form-data">
+            @csrf
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -24,41 +26,86 @@
                     <a class="btn btn-sm btn-danger" href="{{ route('admin.product.index') }}">
                         <i class="fas fa-arrow-left"></i> Quay lại
                     </a>
+                    <button type="submit" name="create" class="btn btn-sm btn-success">
+                                    <i class="fa fa-save"></i> Lưu
+                                </button>
                 </div>
             </div>
             </div>
                 <tbody>
-                    <div>
-                        <div class="form-group">
-                            <label class="name">Tên sản phẩm: *</label>
-                            <input type="text" class="form-control" name="name" placeholder="Nhập tên sản phẩm" name="fname"/>
-                        </div>
-                        <div class="form-group">
-                        <label for="brand_id">Tên thương hiệu: *</label>
-                            <select id="brand_id" class="form-control">
-                                @foreach($list as $row)
-                                <option class="form-control" value="1">{{ $row->brandname}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group" >
-                            <label class="category_id" class="form-control">Danh mục: *</label>
-                            <select id="category_id" class="form-control">
-                                @foreach($list as $row)
-                                <option class="form-control" value="1">{{ $row->categoryname}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label  for="image"  class="text-main">  Hình ảnh sản phẩm(*)</label>
-                            <input  class="form-control"  type="file"  name="image"/><br/>
-                        </div>
-                        <div class="mb-3">
-                            <button  class="btn btn-primary"  type="submit"  id="submit"  name="submit"><p>Thêm</p></button>
-                        </div>
-                    </div>
+                 <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <div class="mb-3">
+                                                    <label for="name">Tên sản phẩm</label>
+                                                    <input type="text" value="" name="name" id="name" class="form-control">
+                                                    @error('name')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="detail">Chi tiết</label>
+                                                    <textarea name="detail" id="detail" rows="8" class="form-control"></textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="description">Mô tả</label>
+                                                    <textarea name="description" id="description" class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label for="category_id">Danh mục</label>
+                                                    <select name="category_id" id="category_id" class="form-control">
+                                                        <option value="">Chọn danh mục</option>
+                                                        @foreach($categories as $category)
+                                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                        @endforeach
+                                                        @error('category_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="brand_id">Thương hiệu</label>
+                                                    <select name="brand_id" id="brand_id" class="form-control">
+                                                        <option value="">Chọn thương hiệu</option>
+@foreach($brands as $brand)
+                                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                        @endforeach
+                                                        @error('brand_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="price">Giá</label>
+                                                    <input type="number" value="" name="price" id="price" class="form-control">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="pricesale">Giá khuyến mãi</label>
+                                                    <input type="number" value="" name="pricesale" id="pricesale" class="form-control">
+                                                </div>
+                                                {{-- <div class="mb-3">
+                                                    <label for="qty">Số lượng</label>
+                                                    <input type="number" value="" name="qty" id="qty" class="form-control">
+                                                </div> --}}
+                                                <div class="mb-3">
+                                                    <label for="image">Hình</label>
+                                                    <input type="file" name="image" id="image" class="form-control">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="status">Trạng thái</label>
+                                                    <select name="status" id="status" class="form-control">
+                                                        <option value="2">Chưa xuất bản</option>
+                                                        <option value="1">Xuất bản</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                 </tbody>
             </div>
         </div>
     </section>
+    </form>
 @endsection

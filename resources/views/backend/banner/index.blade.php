@@ -30,21 +30,44 @@
             <div class="card-body">
                 <div class="row">
                 <div class="col-md-4"> 
-                        <div class="form-group">
-                            <label class="name">Tên Banner: *</label>
-                            <input type="text" class="form-control" name="name" placeholder="Nhập tên banner" name="fname"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="position">Vị trí: </label>
-                            <input type="text" class="form-control" name="position" placeholder="Nhập vị trí" name="fname"/>
-                        </div>
-                        <div class="form-group">
-                            <label  for="image"  class="text-main">  Hình ảnh sản phẩm(*)</label>
-                            <input  class="form-control"  type="file"  name="image"/><br/>
-                        </div>
-                        <div class="mb-3">
-                            <button  class="btn btn-primary"  type="submit"  id="submit"  name="submit"><p>Thêm</p></button>
-                        </div>
+ <form action="{{ route('admin.banner.store') }}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="name">Tên banner</label>
+                                    <input type="text" value="" name="name" id="name" class="form-control">
+                                    @error('name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label for="link">Liên kết</label>
+                                    <input type="text" value="" name="link" id="link" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description">Mô tả</label>
+                                    <textarea name="description" id="description" class="form-control"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="position">Vị trí</label>
+                                    <select name="position" id="position" class="form-control">
+                                        <option value="0">None</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image">Hình</label>
+                                    <input type="file" name="image" id="image" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="status">Trạng thái</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="2">Chưa xuất bản</option>
+                                        <option value="1">Xuất bản</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="submit" name="create" class="btn btn-success">Thêm banner</button>
+                                </div>
+                            </form>
                     </div>
                     <div class="col-md-8">
                     <table class="table table-bordered table-hover table-striped">
@@ -65,7 +88,7 @@
                                 <input type="checkbox" name="checkID[]" id="checkID">
                             </td>
                             <td class="text-center">
-                                <img src="{{ asset('images/banner/'.$row->image) }}" alt="{{ $row->image }}" >
+                                <img class="img-fluid" src="{{ asset('images/banners/'.$row->image) }}" alt="{{ $row->image }}" >
                             </td>
                             <td>
                                 {{ $row->name}}

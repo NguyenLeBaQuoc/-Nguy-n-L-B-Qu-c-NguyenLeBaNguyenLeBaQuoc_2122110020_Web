@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+\@extends('layouts.admin')
 @section('title','Quản lý danh mục')
 @section('contant')
     <section class="content-header">
@@ -30,29 +30,49 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4"> 
-                        <div class="form-group">
-                            <label class="name">Tên danh mục: *</label>
-                            <input type="text" class="form-control" name="name" placeholder="Nhập tên danh mục" name="fname"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="slug">Slug: </label>
-                            <input type="text" class="form-control" name="slug" placeholder="Nhập slug" name="fname"/>
-                        </div>
-                        <div class="form-group">
-                        <label for="panent_id">Tên thương hiệu: *</label>
-                            <select id="panent_id" class="form-control">
-                                @foreach($list as $row)
-                                <option class="form-control" value="1"><i>{{ $row->brandname}}</i></option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label  for="image"  class="text-main">  Hình ảnh sản phẩm(*)</label>
-                            <input  class="form-control"  type="file"  name="image"/><br/>
-                        </div>
-                        <div class="mb-3">
-                            <button  class="btn btn-primary"  type="submit"  id="submit"  name="submit"><p>Thêm</p></button>
-                        </div>
+                   <form action="{{ route('admin.category.store') }}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="name">Tên danh mục</label>
+                                    <input type="text" value="{{ old('name') }}" name="name" id="name" class="form-control">
+                                    @error('name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description">Mô tả</label>
+                                    <textarea name="description" id="description" class="form-control"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="parent_id">Danh mục cha</label>
+                                    <select name="parent_id" id="parent_id" class="form-control">
+                                        <option value="0">None</option>
+                                        {!! $htmlparentid !!}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="sort_order">Sắp xếp</label>
+                                    <select name="sort_order" id="sort_order" class="form-control">
+                                        <option value="0">None</option>
+                                        {!! $htmlsortorder !!}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image">Hình</label>
+                                    <input type="file" name="image" id="image" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="status">Trạng thái</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="2">Chưa xuất bản</option>
+                                        <option value="1">Xuất bản</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="submit" name="create" class="btn btn-success">Thêm danh
+                                        mục</button>
+                                </div>
+                            </form>
                     </div>
                     <div class="col-md-8">
                     <table class="table table-bordered table-hover table-striped">
@@ -74,7 +94,7 @@
                                 <input type="checkbox" name="checkID[]" id="checkID">
                             </td>
                             <td class="text-center">
-                                <img src="{{ asset('images/category/'.$row->image) }}"  alt="{{ $row->image }}" >
+                                <img class="img-fluid" src="{{ asset('images/categorys/'.$row->image) }}"  alt="{{ $row->image }}" >
                             </td>
                             <td>
                                 {{ $row->name}}

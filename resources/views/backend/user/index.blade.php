@@ -52,7 +52,7 @@
                                 <input type="checkbox" name="checkID[]" id="checkID">
                             </td>
                             <td class="text-center">
-                                <img src="{{ asset('images/user/'.$row->image) }}"  alt="{{ $row->image }}" >
+                                <img class="img-fluid" src="{{ asset('images/users/'.$row->image) }}"  alt="{{ $row->image }}" >
                             </td>
                             <td>
                                 {{ $row->name}}

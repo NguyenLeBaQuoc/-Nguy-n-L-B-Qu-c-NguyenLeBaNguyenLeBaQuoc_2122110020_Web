@@ -30,17 +30,38 @@
             <div class="card-body">
                 <div class="row">
                 <div class="col-md-4"> 
-                        <div class="form-group">
-                            <label class="name">Tên chủ đề: *</label>
-                            <input type="text" class="form-control" name="name" placeholder="Nhập tên chủ đề" name="fname"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="slug">Slug: </label>
-                            <input type="text" class="form-control" name="slug" placeholder="Nhập slug" name="fname"/>
-                        </div>
-                        <div class="mb-3">
-                            <button  class="btn btn-primary"  type="submit"  id="submit"  name="submit"><p>Thêm</p></button>
-                        </div>
+                       <form action="{{ route('admin.topic.store') }}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="name">Tên chủ đề</label>
+                                    <input type="text" value="" name="name" id="name" class="form-control">
+                                    @error('name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description">Mô tả</label>
+                                    <textarea name="description" id="description" class="form-control"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="sort_order">Sắp xếp</label>
+                                    <select name="sort_order" id="sort_order" class="form-control">
+                                        <option value="0">None</option>
+                                        {!! $htmlsortorder !!}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="status">Trạng thái</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="2">Chưa xuất bản</option>
+                                        <option value="1">Xuất bản</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="submit" name="create" class="btn btn-success">Thêm danh
+                                        mục</button>
+                                </div>
+                            </form> 
                     </div>
                     <div class="col-md-8">
                     <table class="table table-bordered table-hover table-striped">

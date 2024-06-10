@@ -5,6 +5,9 @@ namespace App\Http\Controllers\backend;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreCategoryRequest;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -13,12 +16,17 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $list = Category::where('category.status','!=',0)
-        ->join('brand','category.parent_id','=','brand.id')
-        ->orderBy('category.created_at','DESC')
-        ->select("category.id","category.image","category.name","category.slug","brand.name as brandname")
+        $list = Category::where('status','!=',0)
+        ->orderBy('created_at','DESC')
+        ->select("id","image","name","slug","status")
         ->get();
-        return view("backend.category.index",compact("list"));
+        $htmlparentid="";
+        $htmlsortorder="";
+        foreach($list as $row){
+            $htmlparentid.="<option value='".$row->id."'>".$row->name."</option>";
+            $htmlsortorder.="<option value='".($row->sort_order+1)."'>sau: ".$row->name."</option>";
+        }
+        return view("backend.category.index",compact("list","htmlparentid","htmlsortorder"));
     }
 
     /**
@@ -32,9 +40,28 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        //
+        $category=new Category();
+        $category->name=$request->name;
+        $category->description=$request->description;
+        $category->parent_id=$request->parent_id;
+        $category->sort_order=$request->sort_order;
+        // $category->image=$request->image;
+      //up anh
+      if ($request->image) {
+        $fileName = date('YmdHis') . '.' . $request->image->extension();
+        $request->image->move(public_path('images/categorys/'), $fileName);
+        $category->image = $fileName;
+    }
+    //end
+        $category->status=$request->status;
+        $category->slug=Str::of($request->name)->slug('-');
+        $category->created_at=date('Y-m-d H:i:s');
+        $category->created_by=Auth::id()??1;
+
+        $category->save();
+        return redirect()->route('admin.category.index');
     }
 
     /**

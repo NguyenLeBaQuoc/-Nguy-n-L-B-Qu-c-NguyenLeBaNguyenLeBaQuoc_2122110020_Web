@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Requests\StoreUserRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -35,9 +37,27 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        //
+        $user=new User();
+        $user->name=$request->name;
+        $user->phone=$request->phone;
+        $user->email=$request->email;
+        $user->gender=$request->gender;
+        $user->address=$request->address;
+        $user->username=$request->username;
+        $user->password=bcrypt($request->password);
+        if ($request->image) {
+            $fileName = date('YmdHis') . '.' . $request->image->extension();
+            $request->image->move(public_path('images/users/'), $fileName);
+            $user->image = $fileName;
+        }
+        $user->roles=$request->roles;
+        $user->status=$request->status;
+        $user->created_at=date('Y-m-d H:i:s');
+        $user->created_by=Auth::id()??1;
+        $user->save();
+        return redirect()->route('admin.user.index');
     }
 
     /**
