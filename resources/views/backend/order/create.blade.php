@@ -1,20 +1,49 @@
 @extends('layouts.admin')
-@section('title','Quản lý đơn hàng')
-@section('contant')
+@section('title', 'Trang Chủ')
+
+
+@section('content')
+<div>
+  @if (session('success'))
+    <div id="success-message" class="alert alert-success" style="color: black; font-size: 20px;">
+        {{ session('success') }}
+    </div>
+@endif
+
+<script>
+    // Function to hide alerts after a timeout
+    function hideAlerts() {
+        var successAlert = document.getElementById('success-message');
+        var errorAlert = document.getElementById('error-message');
+
+        if (successAlert) {
+            setTimeout(function() {
+                successAlert.style.display = 'none';
+            }, 5000); // 5 seconds
+        }
+    }
+
+    // Call the hideAlerts function when the page is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        hideAlerts();
+    });
+</script>
+
+    <!-- CONTENT -->
     <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Quản lý đơn hàng</h1>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Blank Page</li>
-                </ol>
-            </div>
-            </div>
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Thêm mới đơn hàng</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="">Home</a></li>
+              <li class="breadcrumb-item active">Blank Page</li>
+            </ol>
+          </div>
         </div>
+      </div>
     </section>
     <section class="content">
         <div class="card">
@@ -42,11 +71,17 @@
                             <input type="text" class="form-control" name="delivery_email" placeholder="Nhập email" name="fname"/>
                         </div>
                         <div class="mb-3">
-                            <button  class="btn btn-primary"  type="submit"  id="submit"  name="submit"><p>Thêm</p></button>
+                            <button  class="btn btn-success"  type="submit"  id="submit"  name="submit">Lưu</button>
                         </div>
                     </div>
                 </tbody>
             </div>
         </div>
     </section>
+    <!-- /.CONTENT -->
+  </div>
+
+@endsection
+@section('header')
+<link rel="stylesheet" href="home.css">
 @endsection

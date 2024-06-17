@@ -3,14 +3,52 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Contact;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
 
 class ContactController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function restore(string $id){
+        $contact = Contact::find($id);
+        if($contact==null){
+            return redirect()->route('admin.contact.index');
+        }
+        $contact->status=2;
+        $contact->updated_at=date('Y-m-d H:i:s');
+        $contact->updated_by=Auth::id()??1;
+
+        $contact->save();
+        return redirect()->route('admin.contact.trash')->with('success', 'Contact đã được khôi phục thành công.');
+    }
+    public function delete(string $id){
+        $contact = Contact::find($id);
+        if($contact==null){
+            return redirect()->route('admin.contact.index');
+        }
+        $contact->status=0;
+        $contact->updated_at=date('Y-m-d H:i:s');
+        $contact->updated_by=Auth::id()??1;
+
+        $contact->save();
+        return redirect()->route('admin.contact.index')->with('success', 'Contact đã được xóa vào thùng rác thành công.');
+    }
+    public function status($id)
+    {
+        $contact = Contact::find($id);
+        if ($contact) {
+            // Đảo ngược trạng thái từ 1 sang 2 và ngược lại
+            $contact->status = $contact->status == 1 ? 2 : 1;
+            $contact->save();
+        }
+
+        return redirect()->route('admin.contact.index')->with('success', 'Contact đã được cập nhật trạng thái thành công.');
+    }
     public function index()
     {
         $list = Contact::where('status','!=',0)
@@ -19,7 +57,13 @@ class ContactController extends Controller
         ->get();
         return view("backend.contact.index",compact("list"));
     }
-
+    public function trash(){
+        $list = Contact::where('status','=',0)
+        ->orderBy('created_at','DESC')
+        ->select("id","name","email","phone")
+        ->get();
+        return view("backend.contact.trash",compact("list"));
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -45,7 +89,11 @@ class ContactController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $contact = Contact::find($id);
+        if ($contact == null) {
+            return redirect()->route('admin.contact.index');
+        }
+        return view("backend.contact.show", compact("contact"));
     }
 
     /**
@@ -69,6 +117,11 @@ class ContactController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $contact = Contact::find($id);
+        if($contact==null){
+            return redirect()->route('admin.contact.index');
+        }
+        $contact->delete();
+        return redirect()->route('admin.contact.trash')->with('success', 'Contact đã được xáo khỏi cơ sỡ dữ liệu thành công.');
     }
 }

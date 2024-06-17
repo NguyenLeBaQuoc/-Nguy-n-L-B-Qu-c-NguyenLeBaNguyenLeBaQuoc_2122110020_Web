@@ -1,39 +1,70 @@
 @extends('layouts.admin')
-@section('title','Quản lý liên hệ')
-@section('contant')
-<form action="{{ route('admin.user.store') }}" method="post" enctype="multipart/form-data">
+@section('title', 'Trang Chủ')
+
+
+@section('content')
+@if (session('success'))
+    <div id="success-message" class="alert alert-success" style="color: black; font-size: 20px;">
+        {{ session('success') }}
+    </div>
+@endif
+
+<script>
+    // Function to hide alerts after a timeout
+    function hideAlerts() {
+        var successAlert = document.getElementById('success-message');
+        var errorAlert = document.getElementById('error-message');
+
+        if (successAlert) {
+            setTimeout(function() {
+                successAlert.style.display = 'none';
+            }, 5000); // 5 seconds
+        }
+    }
+
+    // Call the hideAlerts function when the page is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        hideAlerts();
+    });
+</script>
+<div>
+        <form action="{{ route('admin.user.store') }}" method="post" enctype="multipart/form-data">
             @csrf
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Quản lý liên hệ</h1>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Blank Page</li>
-                </ol>
-            </div>
-            </div>
-        </div>
-    </section>
-    <section class="content">
-        <div class="card">
-            <div class="card-header">
-            <div class="row">
-                <div class="col-12 text-right">
-                    <a class="btn btn-sm btn-danger" href="{{ route('admin.post.index') }}">
-                        <i class="fas fa-arrow-left"></i> Quay lại
-                    </a>
-                      <button type="submit" name="create" class="btn btn-sm btn-success">
+            <!-- CONTENT -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Thêm mới thành viên</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href=" ">Home</a></li>
+                                <li class="breadcrumb-item active">Blank Page</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="content">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12 text-right">
+                                <button type="submit" name="create" class="btn btn-sm btn-success">
                                     <i class="fa fa-save"></i> Lưu
                                 </button>
-                </div>
-            </div>
-            </div>
-                <tbody>
-                   <div class="card-body">
+                                <a class="btn btn-sm btn-info" href="{{ route('admin.user.index') }}">
+                                    <i class="fas fa-arrow-left"></i> Quay lại
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <tbody>
+                            <div>
+                                <section class="content">
+                                    <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="mb-3">
@@ -71,7 +102,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-<label for="username">Tên đăng nhập</label>
+                                                    <label for="username">Tên đăng nhập</label>
                                                     <input type="text" value="" name="username" id="username" class="form-control">
                                                     @error('username')
                                                     <span class="text-danger">{{ $message }}</span>
@@ -106,15 +137,25 @@
                                                     <label for="status">Trạng thái</label>
                                                     <select name="status" id="status" class="form-control">
                                                         <option value="2">Chưa xuất bản</option>
-<option value="1">Xuất bản</option>
+                                                        <option value="1">Xuất bản</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                </tbody>
-            </div>
-        </div>
-    </section>
-    </form>
+                            </div>
+            </section>
+    </div>
+    </tbody>
+</div>
+</section>
+<!-- /.CONTENT -->
+</form>
+</div>
+</div>
+
 @endsection
+@section('header')
+<link rel="stylesheet" href="home.css">
+@endsection
+

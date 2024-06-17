@@ -56,7 +56,7 @@
           <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">HoDienLoi</a>
+          <a href="#" class="d-block">BaQuocNguyen</a>
         </div>
       </div>
       <nav class="mt-2">
@@ -196,14 +196,14 @@
   </aside>
   <div class="content-wrapper">
     <!-- CONTENT -->
-@yield('contant')
+@yield('content')
     <!-- /.CONTENT -->
   </div>
   <footer class="main-footer">
     <div class="float-right d-none d-sm-block">
       <b>Version</b> 3.2.0
     </div>
-    <strong>Sửa bởi: Hồ Diên Lợi</strong> All rights reserved.
+    <strong>Sửa bởi: Nguyễn Lê Bá Quốc</strong> All rights reserved.
   </footer>
   <aside class="control-sidebar control-sidebar-dark">
   </aside>

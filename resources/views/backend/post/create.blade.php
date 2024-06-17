@@ -1,39 +1,69 @@
 @extends('layouts.admin')
-@section('title','Quản lý liên hệ')
-@section('contant')
-<form action="{{ route('admin.post.store') }}" method="post" enctype="multipart/form-data">
+@section('title', 'Trang Chủ')
+
+
+@section('content')
+@if (session('success'))
+    <div id="success-message" class="alert alert-success" style="color: black; font-size: 20px;">
+        {{ session('success') }}
+    </div>
+@endif
+
+<script>
+    // Function to hide alerts after a timeout
+    function hideAlerts() {
+        var successAlert = document.getElementById('success-message');
+        var errorAlert = document.getElementById('error-message');
+
+        if (successAlert) {
+            setTimeout(function() {
+                successAlert.style.display = 'none';
+            }, 5000); // 5 seconds
+        }
+    }
+
+    // Call the hideAlerts function when the page is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        hideAlerts();
+    });
+</script>
+<div>
+        <!-- CONTENT -->
+        <form action="{{ route('admin.post.store') }}" method="post" enctype="multipart/form-data">
             @csrf
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Quản lý liên hệ</h1>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Blank Page</li>
-                </ol>
-            </div>
-            </div>
-        </div>
-    </section>
-    <section class="content">
-        <div class="card">
-            <div class="card-header">
-            <div class="row">
-                <div class="col-12 text-right">
-                    <a class="btn btn-sm btn-danger" href="{{ route('admin.post.index') }}">
-                        <i class="fas fa-arrow-left"></i> Quay lại
-                    </a>
-                    <button type="submit" name="create" class="btn btn-sm btn-success">
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Thêm mới bài viết</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href=" ">Home</a></li>
+                                <li class="breadcrumb-item active">Blank Page</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="content">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12 text-right">
+                                <button type="submit" name="create" class="btn btn-sm btn-success">
                                     <i class="fa fa-save"></i> Lưu
                                 </button>
-                </div>
-            </div>
-            </div>
-                <tbody>
-                    <div class="card-body">
+                                <a class="btn btn-sm btn-danger" href="{{ route('admin.post.index') }}">
+                                    <i class="fas fa-arrow-left"></i> Quay lại
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <tbody>
+
+                        <div class="card-body">
                             <div class="row">
                                 <div class="col-md-9">
                                     <div class="mb-3">
@@ -79,12 +109,23 @@
                                             <option value="1">Xuất bản</option>
                                         </select>
                                     </div>
-</div>
+
+                                </div>
                             </div>
                         </div>
-                </tbody>
-            </div>
-        </div>
-    </section>
-    </form>
+                </div>
+            </section>
+
+            </tbody>
+        </form>
+    </div>
+</div>
+</section>
+<!-- /.CONTENT -->
+</div>
+
 @endsection
+@section('header')
+<link rel="stylesheet" href="home.css">
+@endsection
+

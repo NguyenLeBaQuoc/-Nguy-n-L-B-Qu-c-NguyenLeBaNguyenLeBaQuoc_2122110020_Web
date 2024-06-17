@@ -6,9 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBrandRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
@@ -17,13 +14,15 @@ class StoreBrandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required',
+            'name' => 'required|min:2',
+
         ];
     }
-    public function message(): array
+    public function messages()
     {
         return [
-            'name.required'=>'Tên danh mục không để trống!',
+            'name.required' => 'Không Để Trống',
+            'name.min' => 'Trên 2 kí tự',
         ];
     }
 }

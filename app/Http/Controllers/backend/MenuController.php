@@ -3,195 +3,179 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Menu;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Topic;
 use App\Models\Post;
+
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreMenuRequest;
+use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function restore(string $id)
+    {
+        $menu = Menu::find($id);
+        if ($menu == null) {
+            return redirect()->route('admin.menu.index');
+        }
+        $menu->status = 2;
+        $menu->updated_at = date('Y-m-d H:i:s');
+        $menu->updated_by = Auth::id() ?? 1;
+
+        $menu->save();
+        return redirect()->route('admin.menu.trash')->with('success', 'Menu đã được khô phục thành công.');
+    }
+    public function delete(string $id)
+    {
+        $menu = Menu::find($id);
+        if ($menu == null) {
+            return redirect()->route('admin.menu.index');
+        }
+        $menu->status = 0;
+        $menu->updated_at = date('Y-m-d H:i:s');
+        $menu->updated_by = Auth::id() ?? 1;
+
+        $menu->save();
+        return redirect()->route('admin.menu.index')->with('success', 'Menu đã được xóa vào thùng rác thành công.');
+    }
+    public function status($id)
+    {
+        $menu = Menu::find($id);
+        if ($menu) {
+            // Đảo ngược trạng thái từ 1 sang 2 và ngược lại
+            $menu->status = $menu->status == 1 ? 2 : 1;
+            $menu->save();
+        }
+
+        return redirect()->route('admin.menu.index')->with('success', 'Menu đã được thay đổi trạng thái thành công.');
+    }
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $list = Menu::where('status','!=',0)
-        ->orderBy('created_at','DESC')
-        ->select("id","name","link","position")
-        ->get();
-        $categories= Category::where('status','!=',0)
-        ->orderBy('created_at','DESC')
-        ->select("id","name")
-        ->get();
-        $brands= Brand::where('status','!=',0)
-        ->orderBy('created_at','DESC')
-        ->select("id","name")
-        ->get();
-        $topics= Topic::where('status','!=',0)
-        ->orderBy('created_at','DESC')
-        ->select("id","name")
-        ->get();
-        $pages= Post::where([['id','!=',0],['type','=','page']])
-        ->orderBy('created_at','DESC')
-        ->select("id","title")
-        ->get();
-        return view("backend.menu.index",compact("list","categories","brands","topics","pages"));
-    }
+        $categories = Category::all();
+        $brands = Brand::all();
+        $topics = Topic::all();
+        $pages = Post::where('type', 'page')->get();
+        $posts = Post::where('type', 'post')->get();
+        $list = Menu::where('status', '!=', '0')
+            ->orderBy('created_at', 'DESC')
+            ->select('id', 'link', 'name', 'position', 'status')
+            ->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+        return view('backend.menu.index', compact('list', 'categories', 'brands', 'topics', 'pages', 'posts'));
+    }
+    public function trash()
     {
-        $list = Menu::where('menu.status','!=',0)
-        ->orderBy('menu.created_at','DESC')
-        ->select("menu.id","menu.name","menu.link")
-        ->get();
-        return view("backend.menu.create",compact("list"));
+        $list = Menu::where('status', '=', '0')
+            ->orderBy('created_at', 'DESC')
+            ->select('id', 'link', 'name', 'position', 'status')
+            ->get();
+        return view('backend.menu.trash', compact('list'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
-    {
-        if(isset($request->createCategory)){
-            $listid = $request->categoryid;
-            if($listid){
-                foreach($listid as $id){
-                    $category = Category::find($id);
-                    if($category != null){
-                        $menu = new Menu();
-                        $menu->name = $category->name;
-                        $menu->link = 'categorys/' . $category->slug;
-                        $menu->sort_order = '0';
-                        $menu->parent_id = '0';
-                        $menu->type = 'category';
-                        $menu->position = $request->position;
-                        $menu->table_id = $id;
-                        $menu->created_at = date('Y-m-d H:i:s');
-                        $menu->created_by = Auth::id()??1;
-                        $menu->status = $request->status;
-                        $menu->save();
-                    }
-                }
-                return redirect()->route('admin.menu.index');
-            }else{
-                echo "Không có";
-            }
-        }
+{
+    $userId = Auth::id();
+    $position = $request->position;
+    $status = $request->status;
 
-        if(isset($request->createBrand)){
-            if(isset($request->createBrand)){
-                $listid = $request->brandid;
-                if($listid){
-                    foreach($listid as $id){
-                        $brand = Brand::find($id);
-                        if($brand != null){
-                            $menu = new Menu();
-                            $menu->name = $brand->name;
-                            $menu->link = 'brands/' . $brand->slug;
-                            $menu->sort_order = '0';
-                            $menu->parent_id = '0';
-                            $menu->type = 'brand';
-                            $menu->position = $request->position;
-                            $menu->table_id = $id;
-                            $menu->created_at = date('Y-m-d H:i:s');
-                            $menu->created_by = Auth::id()??1;
-                            $menu->status = $request->status;
-                            $menu->save();
-                        }
-                    }
-                    return redirect()->route('admin.menu.index');
-                }else{
-                    echo "Không có";
-                }
-            }
-        }
-
-        if(isset($request->createTopic)){
-            if(isset($request->createTopic)){
-                $listid = $request->topicid;
-                if($listid){
-                    foreach($listid as $id){
-                        $topic = Topic::find($id);
-                        if($topic != null){
-                            $menu = new Menu();
-                            $menu->name = $topic->name;
-                            $menu->link = 'topics/' . $topic->slug;
-                            $menu->sort_order = '0';
-                            $menu->parent_id = '0';
-                            $menu->type = 'topic';
-                            $menu->position = $request->position;
-                            $menu->table_id = $id;
-                            $menu->created_at = date('Y-m-d H:i:s');
-                            $menu->created_by = Auth::id()??1;
-                            $menu->status = $request->status;
-                            $menu->save();
-                        }
-                    }
-                    return redirect()->route('admin.menu.index');
-                }else{
-                    echo "Không có";
-                }
-            }
-        }
-
-        if(isset($request->createPage)){
-            if(isset($request->createPage)){
-                $listid = $request->pageid;
-                if($listid){
-                    foreach($listid as $id){
-                        $page = Post::where([['id','=',$id],['type','=','page']])->first();
-                        if($page != null){
-                            $menu = new Menu();
-                            $menu->name = $page->title;
-                            $menu->link = 'pages/' . $page->slug;
-                            $menu->sort_order = '0';
-                            $menu->parent_id = '0';
-                            $menu->type = 'page';
-                            $menu->position = $request->position;
-                            $menu->table_id = $id;
-                            $menu->created_at = date('Y-m-d H:i:s');
-                            $menu->created_by = Auth::id()??1;
-                            $menu->status = $request->status;
-                            $menu->save();
-                        }
-                    }
-                    return redirect()->route('admin.menu.index');
-                }else{
-                    echo "Không có";
-                }
-            }
-        }
-
-        if(isset($request->createCustom)){
-            if(isset($request->name, $request->link)){
-                $menu = new Menu();
-                $menu->name = $request->name;
-                $menu->link = $request->link;
-                $menu->sort_order = '0';
-                $menu->parent_id = '0';
-                $menu->type = 'custom';
-                $menu->position = $request->position;
-                $menu->created_at = date('Y-m-d H:i:s');
-                $menu->created_by = Auth::id()??1;
-                $menu->status = $request->status;
-                $menu->save();
-                return redirect()->route('admin.menu.index');
+    if ($request->has('createCategory') && $request->categories) {
+        foreach ($request->categories as $categoryId) {
+            $category = Category::find($categoryId);
+            if ($category) {
+                $parentSlug = $category->parent ? $category->parent->slug : '';
+                Menu::create([
+                    'name' => $category->name,
+                    'link' => 'danh-muc' . $parentSlug . '/' . $category->slug,
+                    'position' => $position,
+                    'status' => $status,
+                    'created_by' => Auth::id() ?? 1,
+                    'type' => 'category'
+                ]);
             }
         }
     }
+
+    if ($request->has('createBrand') && $request->brands) {
+        foreach ($request->brands as $brandId) {
+            $brand = Brand::find($brandId);
+            if ($brand) {
+                Menu::create([
+                    'name' => $brand->name,
+                    'link' => 'thuong-hieu' . $brand->slug,
+                    'position' => $position,
+                    'status' => $status,
+                    'created_by' => Auth::id() ?? 1,
+                    'type' => 'brand'
+                ]);
+            }
+        }
+    }
+
+    if ($request->has('createTopic') && $request->topics) {
+        foreach ($request->topics as $topicId) {
+            $topic = Topic::find($topicId);
+            if ($topic) {
+                Menu::create([
+                    'name' => $topic->name,
+                    'link' => 'chu-de' . $topic->slug,
+                    'position' => $position,
+                    'status' => $status,
+                    'created_by' => Auth::id() ?? 1,
+                    'type' => 'topic'
+                ]);
+            }
+        }
+    }
+    if ($request->has('createPage') && $request->pages) {
+        foreach ($request->pages as $pageId) {
+            $page = Post::find($pageId);
+            if ($page) {
+                Menu::create([
+                    'name' => $page->title,
+                    'link' => 'trang-don' . $page->slug,
+                    'position' => $position,
+                    'status' => $status,
+                    'created_by' => Auth::id() ?? 1,
+                    'type' => 'page'
+                ]);
+            }
+        }
+    }
+
+    if ($request->has('createCustom')) {
+        Menu::create([
+            'name' => $request->name,
+            'link' => $request->link,
+            'position' => $position,
+            'created_by' => Auth::id() ?? 1,
+            'type' => 'custom'
+        ]);
+    }
+
+    return redirect()->route('admin.menu.index')->with('success', 'Menu đã được thêm thành công.');
+}
+
+
+
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        return view("backend.menu.create");
+        $menu = Menu::find($id);
+        if ($menu == null) {
+            return redirect()->route('admin.menu.index');
+        }
+        return view("backend.menu.show", compact("menu"));
     }
 
     /**
@@ -199,7 +183,21 @@ class MenuController extends Controller
      */
     public function edit(string $id)
     {
-        return view("backend.menu.create");
+        $menu = Menu::find($id);
+        if (!$menu) {
+            return redirect()->route('admin.menu.index');
+        }
+        $categories = Category::all();
+        $brands = Brand::all();
+        $topics = Topic::all();
+        $pages = Post::where('type', 'page')->get();
+        $posts = Post::where('type', 'post')->get();
+        $list = Menu::where('status', '!=', 0)
+            ->orderBy('created_at', 'DESC')
+            ->select('id', 'link', 'name', 'position', 'status')
+            ->get();
+
+        return view('backend.menu.edit', compact('menu', 'list', 'categories', 'brands', 'topics', 'pages', 'posts'));
     }
 
     /**
@@ -207,7 +205,17 @@ class MenuController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $menu = Menu::find($id);
+        if (!$menu) {
+            return redirect()->route('admin.menu.index');
+        }
+        $menu->name = $request->name;
+        $menu->link = $request->link;
+        $menu->position = $request->position;
+        $menu->status = $request->status;
+        $menu->updated_by = Auth::id() ?? 1;
+        $menu->save();
+        return redirect()->route('admin.menu.index')->with('success', 'Menu đã được cập nhật thành công.');
     }
 
     /**
@@ -215,6 +223,11 @@ class MenuController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $menu = Menu::find($id);
+        if ($menu == null) {
+            return redirect()->route('admin.menu.index');
+        }
+        $menu->delete();
+        return redirect()->route('admin.menu.trash')->with('success', 'Menu đã được xóa khỏi cơ sở dữ liệu thành công.');
     }
 }
